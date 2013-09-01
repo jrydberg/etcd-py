@@ -187,7 +187,7 @@ class Etcd(object):
         if 'prevValue' not in res:
             res['prevValue'] = None
         return EtcdWatch(action=res['action'], value=res['value'],
-                key=res['key'], newKey=res['newKey'], index=res['index'])
+                key=res['key'][1:], newKey=res['newKey'], index=res['index'])
 
     def testandset(self, key, prev_value, value, ttl=None):
         """Atomic test and set
