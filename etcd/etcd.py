@@ -24,12 +24,14 @@ KEYS_URL = "{}/v1/keys/{}"
 WATCH_URL = "{}/v1/watch/{}"
 MACHINES_URL = "{}/v1/machines"
 LEADER_URL = "{}/v1/leader"
+LIST_URL = "{}/v1/keys/{}/"
 
 EtcdSet = namedtuple("set", "index, newKey, prevValue, expiration")
 EtcdGet = namedtuple("get", "index, value")
 EtcdDelete = namedtuple("delete", "index, prevValue")
 EtcdWatch = namedtuple("watch", "action, value, key, index, newKey")
 EtcdTestAndSet = namedtuple("testandset", "index, key, prevValue, expiration")
+EtcdList = namedtuple("list", "key, index, value, dir")
 
 
 class EtcdError(BaseException):
@@ -118,6 +120,34 @@ class Etcd(object):
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
         return EtcdGet(index=res['index'], value=res['value'])
+
+    def list(self, key):
+        """list all the keys under a prefix path.
+        
+        key: the key to retrieve the value for
+        """
+        req = requests.get(LIST_URL.format(self.base_url, key),
+                cert=self.ssl_conf)
+        result = req.json()
+        if 'errorCode' in result:
+            raise EtcdError(res['errorCode'], res['message'])
+        for res in result:
+            yield EtcdList(key=res['key'][1:], index=res['index'],
+                           value=res.get('value'),
+                           dir=res.get('dir', False))
+
+    def get_recursive(self, key):
+        """Get all keys in a directory."""
+        work_queue = [key]
+        result = {}
+        while work_queue:
+            key = work_queue.pop(0)
+            for entry in self.list(key):
+                if entry.dir:
+                    work_queue.append(entry.key)
+                else:
+                    result[entry.key] = entry.value
+        return result
 
     def delete(self, key):
         """Deletes the given key
