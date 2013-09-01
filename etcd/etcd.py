@@ -159,19 +159,24 @@ class Etcd(object):
         return EtcdWatch(action=res['action'], value=res['value'],
                 key=res['key'], newKey=res['newKey'], index=res['index'])
 
-    def testandset(self, key, prev_value, value):
+    def testandset(self, key, prev_value, value, ttl=None):
         """Atomic test and set
         
         key: the key to test/set
         prev_value: must match the current value of the key
         value: the value to set the key to
+        ttl: optionally specify a time-to-live for this key
         """
         data = {'prevValue': prev_value, 'value': value}
+        if ttl:
+            data['ttl'] = ttl
         req = requests.post(KEYS_URL.format(self.base_url, key), data,
                 cert=self.ssl_conf)
         res = req.json()
         if 'expiration' not in res:
             res['expiration'] = None
+        if 'prevValue' not in res:
+            res['prevValue'] = None
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'], res['cause'])
         return EtcdTestAndSet(index=res['index'], key=res['key'],
