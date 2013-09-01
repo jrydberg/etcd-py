@@ -40,13 +40,14 @@ class EtcdError(BaseException):
 class Etcd(object):
     """Talks to an etcd instance"""
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, ssl_cert=None,
-            ssl_key=None, follow_leader=True):
+            ssl_key=None, follow_leader=True, autostart=True):
         """
         host: sets the hostname or IP address of the etcd server
         port: sets the port that the server is listening on
         ssl_cert / ssl_key: specify an optional client certificate and key
         follow_leader: if True we will always try to follow the current leader
             (not yet implemented fully!)
+        autostart: start the client from the constructor
         Note: ssl_cert may be set to a file containing both certificate and
             key
         """
@@ -62,8 +63,16 @@ class Etcd(object):
         else:
             schema = "http"
         self.base_url = "{}://{}:{}".format(schema, host, port)
-        self.current_leader = self.leader()
+        self.current_leader = None
         self.follow_leader = follow_leader
+        self._machines_cache = None
+        if autostart:
+            self.start()
+
+    def start(self):
+        """Start the client.
+        """
+        self.current_leader = self.leader()
         if self.follow_leader:
             # not quite right! leader returns the server port not client!
             #self.base_url = self.current_leader
@@ -71,8 +80,8 @@ class Etcd(object):
             # schema
             #self.base_url = self.machines()[0]
             leader_parts = urlparse(self.machines()[0])
-            self.base_url = "{}://{}:{}".format(schema, leader_parts.hostname,
-                    leader_parts.port)
+            self.base_url = "{}://{}:{}".format(leader_parts.scheme,
+                    leader_parts.hostname, leader_parts.port)
         self.machines_cache = None
         self.machines()
 
