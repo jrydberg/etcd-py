@@ -53,6 +53,7 @@ class Etcd(object):
         Note: ssl_cert may be set to a file containing both certificate and
             key
         """
+        self.requests = requests.Session()
         self.ssl_conf = None
         if ssl_cert and ssl_key:
             # separate cert and key files
@@ -97,7 +98,7 @@ class Etcd(object):
         data = {'value': value}
         if ttl:
             data['ttl'] = ttl
-        req = requests.post(KEYS_URL.format(self.base_url, key), data,
+        req = self.requests.post(KEYS_URL.format(self.base_url, key), data,
                 cert=self.ssl_conf)
         res = req.json()
         if 'newKey' not in res:
@@ -114,7 +115,7 @@ class Etcd(object):
         
         key: the key to retrieve the value for
         """
-        req = requests.get(KEYS_URL.format(self.base_url, key),
+        req = self.requests.get(KEYS_URL.format(self.base_url, key),
                 cert=self.ssl_conf)
         res = req.json()
         if 'errorCode' in res:
@@ -126,7 +127,7 @@ class Etcd(object):
         
         key: the key to retrieve the value for
         """
-        req = requests.get(LIST_URL.format(self.base_url, key),
+        req = self.requests.get(LIST_URL.format(self.base_url, key),
                 cert=self.ssl_conf)
         result = req.json()
         if 'errorCode' in result:
@@ -154,7 +155,7 @@ class Etcd(object):
         
         key: the key to delete
         """
-        req = requests.delete(KEYS_URL.format(self.base_url, key),
+        req = self.requests.delete(KEYS_URL.format(self.base_url, key),
                 cert=self.ssl_conf)
         res = req.json()
         if 'errorCode' in res:
@@ -170,10 +171,10 @@ class Etcd(object):
         """
         try:
             if index:
-                req = requests.post(WATCH_URL.format(self.base_url, path),
+                req = self.requests.post(WATCH_URL.format(self.base_url, path),
                         {'index': index}, timeout=timeout, cert=self.ssl_conf)
             else:
-                req = requests.get(WATCH_URL.format(self.base_url, path),
+                req = self.requests.get(WATCH_URL.format(self.base_url, path),
                         timeout=timeout, cert=self.ssl_conf)
         except requests.exceptions.Timeout:
             return None
@@ -200,7 +201,7 @@ class Etcd(object):
         data = {'prevValue': prev_value, 'value': value}
         if ttl:
             data['ttl'] = ttl
-        req = requests.post(KEYS_URL.format(self.base_url, key), data,
+        req = self.requests.post(KEYS_URL.format(self.base_url, key), data,
                 cert=self.ssl_conf)
         res = req.json()
         if 'expiration' not in res:
@@ -214,13 +215,13 @@ class Etcd(object):
 
     def machines(self):
         """Returns a list of machines in the cluster"""
-        req = requests.get(MACHINES_URL.format(self.base_url),
+        req = self.requests.get(MACHINES_URL.format(self.base_url),
                 cert=self.ssl_conf)
         self.machines_cache = req.text.split(', ')
         return self.machines_cache
 
     def leader(self):
         """Returns the leader"""
-        req = requests.get(LEADER_URL.format(self.base_url),
+        req = self.requests.get(LEADER_URL.format(self.base_url),
                 cert=self.ssl_conf)
         return req.text
