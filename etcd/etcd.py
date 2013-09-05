@@ -13,8 +13,6 @@ See LICENSE for more details
 """
 
 import sys
-import time
-import json
 import multiprocessing
 
 from collections import namedtuple
