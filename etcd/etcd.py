@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 """
-etcd.py - a Python client for Etcd
+A Python client for Etcd
+
+This is a Python client for Etcd.
+
+Etcd can be found at: https://github.com/coreos/etcd
+
+See README.rst for details on how to use this module
 
 Copyright (C) 2013 Kris Foster
 See LICENSE for more details
@@ -36,6 +42,13 @@ class Etcd(object):
     """Talks to an etcd instance"""
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, ssl_cert=None,
             ssl_key=None):
+        """
+        host: sets the hostname or IP address of the etcd server
+        port: sets the port that the server is listening on
+        ssl_cert / ssl_key: specify an optional client certificate and key
+        Note: ssl_cert may be set to a file containing both certificate and
+        key
+        """
         self.host = host
         self.port = port
         self.ssl_conf = None
@@ -56,7 +69,12 @@ class Etcd(object):
         self.leader_url = "{}/v1/leader".format(self.url_base)
 
     def set(self, key, value, ttl=None):
-        """Sets the key to value"""
+        """Sets key to value
+        
+        key: key name to set
+        value: value to set the key to
+        ttl: optionally specify a time-to-live for this key
+        """
         data = {'value': value}
         if ttl:
             data['ttl'] = ttl
@@ -72,7 +90,10 @@ class Etcd(object):
                 prevValue=res['prevValue'], expiration=res['expiration'])
 
     def get(self, key):
-        """Returns the value of the given key"""
+        """Returns the value of the given key
+        
+        key: the key to retrieve the value for
+        """
         r = requests.get(self.keys_url+key, cert=self.ssl_conf)
         res = r.json()
         if 'errorCode' in res:
@@ -80,7 +101,10 @@ class Etcd(object):
         return EtcdGet(index=res['index'], value=res['value'])
 
     def delete(self, key):
-        """Deletes the given key"""
+        """Deletes the given key
+        
+        key: the key to delete
+        """
         r = requests.delete(self.keys_url+key, cert=self.ssl_conf)
         res = r.json()
         if 'errorCode' in res:
@@ -88,7 +112,12 @@ class Etcd(object):
         return EtcdDelete(index=res['index'], prevValue=res['prevValue'])
 
     def watch(self, path, index=None, timeout=None):
-        """Watches for changes to key"""
+        """Watches for changes to key
+        
+        path: the directory to watch for changes
+        index: optionally specify an index value to start at
+        timeout: optionally specify a timeout to break out of watch
+        """
         try:
             if index:
                 r = requests.post(self.watch_url+path, {'index': index},
@@ -111,7 +140,12 @@ class Etcd(object):
                 key=res['key'], newKey=res['newKey'], index=res['index'])
 
     def testandset(self, key, prev_value, value):
-        """Atomic test and set"""
+        """Atomic test and set
+        
+        key: the key to test/set
+        prev_value: must match the current value of the key
+        value: the value to set the key to
+        """
         data = {'prevValue': prev_value, 'value': value}
         r = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
         res = r.json()
