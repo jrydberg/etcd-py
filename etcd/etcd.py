@@ -165,4 +165,5 @@ if __name__ == '__main__':
     except EtcdError as err:
         print err
     print e.machines()
+    print e.leader()
 
