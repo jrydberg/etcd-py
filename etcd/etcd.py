@@ -70,8 +70,8 @@ class Etcd(object):
         data = {'value': value}
         if ttl:
             data['ttl'] = ttl
-        r = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
-        res = r.json()
+        req = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
+        res = req.json()
         if 'newKey' not in res:
             res['newKey'] = False
         if 'prevValue' not in res:
@@ -86,8 +86,8 @@ class Etcd(object):
         
         key: the key to retrieve the value for
         """
-        r = requests.get(self.keys_url+key, cert=self.ssl_conf)
-        res = r.json()
+        req = requests.get(self.keys_url+key, cert=self.ssl_conf)
+        res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
         return EtcdGet(index=res['index'], value=res['value'])
@@ -97,8 +97,8 @@ class Etcd(object):
         
         key: the key to delete
         """
-        r = requests.delete(self.keys_url+key, cert=self.ssl_conf)
-        res = r.json()
+        req = requests.delete(self.keys_url+key, cert=self.ssl_conf)
+        res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
         return EtcdDelete(index=res['index'], prevValue=res['prevValue'])
@@ -112,14 +112,14 @@ class Etcd(object):
         """
         try:
             if index:
-                r = requests.post(self.watch_url+path, {'index': index},
+                req = requests.post(self.watch_url+path, {'index': index},
                         timeout=timeout, cert=self.ssl_conf)
             else:
-                r = requests.get(self.watch_url+path, timeout=timeout,
+                req = requests.get(self.watch_url+path, timeout=timeout,
                         cert=self.ssl_conf)
         except requests.exceptions.Timeout:
             return None
-        res = r.json()
+        res = req.json()
         if 'newKey' not in res:
             res['newKey'] = False
         if 'expiration' not in res:
@@ -139,8 +139,8 @@ class Etcd(object):
         value: the value to set the key to
         """
         data = {'prevValue': prev_value, 'value': value}
-        r = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
-        res = r.json()
+        req = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
+        res = req.json()
         if 'expiration' not in res:
             res['expiration'] = None
         if 'errorCode' in res:
@@ -150,10 +150,10 @@ class Etcd(object):
 
     def machines(self):
         """Returns a list of machines in the cluster"""
-        r = requests.get(self.machines_url, cert=self.ssl_conf)
-        return r.text.split(', ')
+        req = requests.get(self.machines_url, cert=self.ssl_conf)
+        return req.text.split(', ')
 
     def leader(self):
         """Returns the leader"""
-        r = requests.get(self.leader_url, cert=self.ssl_conf)
-        return r.text
+        req = requests.get(self.leader_url, cert=self.ssl_conf)
+        return req.text
