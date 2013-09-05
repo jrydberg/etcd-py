@@ -46,6 +46,14 @@ Servers
     >>> e.leader()
     http://127.0.0.1:7001
 
+Client certificates
+
+.. code-block:: pycon
+
+    >>> e = etcd.Etcd(ssl_cert="mycert.pem")
+    or
+    >>> e = etcd.Etcd(ssl_cert="my.crt", ssl_key="my.key")
+
 Author
 ======
 
