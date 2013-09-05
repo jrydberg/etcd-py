@@ -16,3 +16,8 @@ Getting Started
     set(index=192, newKey=False, prevValue=u'Hey Wait!', expiration=None)
     >>> e.get("message")
     get(index=192, value=u'Hello, World!')
+
+Author
+======
+
+etcd-py is developed and maintained by Kris Foster (kris.foster@gmail.com)
