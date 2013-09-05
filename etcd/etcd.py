@@ -166,7 +166,6 @@ class Etcd(object):
 
 
 if __name__ == '__main__':
-    """Some basic tests"""
     if len(sys.argv) > 1:
         host = sys.argv[1]
     else:
