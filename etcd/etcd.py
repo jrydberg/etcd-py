@@ -63,7 +63,7 @@ class Etcd(object):
         data = {'value': value}
         if ttl:
             data['ttl'] = ttl
-        r = requests.post(self.keys_url+key, data)
+        r = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
         res = r.json()
         if 'newKey' not in res:
             res['newKey'] = False
@@ -76,7 +76,7 @@ class Etcd(object):
 
     def get(self, key):
         """Returns the value of the given key"""
-        r = requests.get(self.keys_url+key)
+        r = requests.get(self.keys_url+key, cert=self.ssl_conf)
         res = r.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
@@ -84,7 +84,7 @@ class Etcd(object):
 
     def delete(self, key):
         """Deletes the given key"""
-        r = requests.delete(self.keys_url+key)
+        r = requests.delete(self.keys_url+key, cert=self.ssl_conf)
         res = r.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
@@ -94,10 +94,11 @@ class Etcd(object):
         """Watches for changes to key"""
         try:
             if index:
-                    r = requests.post(self.watch_url+path, {'index': index},
-                            timeout=timeout)
+                r = requests.post(self.watch_url+path, {'index': index},
+                        timeout=timeout, cert=self.ssl_conf)
             else:
-                r = requests.get(self.watch_url+path, timeout=timeout)
+                r = requests.get(self.watch_url+path, timeout=timeout,
+                        cert=self.ssl_conf)
         except requests.exceptions.Timeout:
             return None
         res = r.json()
@@ -115,7 +116,7 @@ class Etcd(object):
     def testandset(self, key, prev_value, value):
         """Atomic test and set"""
         data = {'prevValue': prev_value, 'value': value}
-        r = requests.post(self.keys_url+key, data)
+        r = requests.post(self.keys_url+key, data, cert=self.ssl_conf)
         res = r.json()
         if 'expiration' not in res:
             res['expiration'] = None
@@ -126,12 +127,12 @@ class Etcd(object):
 
     def machines(self):
         """Returns a list of machines in the cluster"""
-        r = requests.get(self.machines_url)
+        r = requests.get(self.machines_url, cert=self.ssl_conf)
         return r.text.split(', ')
 
     def leader(self):
         """Returns the leader"""
-        r = requests.get(self.leader_url)
+        r = requests.get(self.leader_url, cert=self.ssl_conf)
         return r.text
 
 
