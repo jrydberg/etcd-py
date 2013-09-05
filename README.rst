@@ -1,0 +1,19 @@
+etcd-py
+=======
+
+A python client to etcd (https://github.com/coreos/etcd)
+
+This is very early code.
+
+Getting Started
+===============
+
+```
+>>> import etcd
+>>> e = etcd.Etcd("10.0.1.110")
+>>> e.set("message", "Hello, World!")
+set(index=192, newKey=False, prevValue=u'Hey Wait!', expiration=None)
+>>> e.get("message")
+get(index=192, value=u'Hello, World!')
+>>>
+```
