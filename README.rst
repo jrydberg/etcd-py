@@ -9,6 +9,7 @@ Getting Started
 ===============
 
 .. code-block:: pycon
+
     >>> import etcd
     >>> e = etcd.Etcd("10.0.1.110")
     >>> e.set("message", "Hello, World!")
