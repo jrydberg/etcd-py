@@ -34,14 +34,29 @@ class EtcdError(BaseException):
 
 class Etcd(object):
     """Talks to an etcd instance"""
-    def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT):
+    def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, ssl_cert=None,
+            ssl_key=None):
         self.host = host
         self.port = port
-        self.keys_url = "http://{}:{}/v1/keys/".format(self.host, self.port)
-        self.watch_url = "http://{}:{}/v1/watch/".format(self.host, self.port)
-        self.machines_url = "http://{}:{}/v1/machines".format(self.host,
+        self.ssl_conf = None
+        if ssl_cert and ssl_key:
+            # separate cert and key files
+            self.ssl_conf = (ssl_cert, ssl_key)
+        elif ssl_cert:
+            # this should be a pem containing both cert and key
+            self.ssl_conf = ssl_cert
+        if self.ssl_conf:
+            self.schema = "https"
+        else:
+            self.schema = "http"
+        self.keys_url = "{}://{}:{}/v1/keys/".format(self.schema, self.host,
                 self.port)
-        self.leader_url = "http://{}:{}/v1/leader".format(self.host, self.port)
+        self.watch_url = "{}://{}:{}/v1/watch/".format(self.schema, self.host,
+                self.port)
+        self.machines_url = "{}://{}:{}/v1/machines".format(self.schema,
+                self.host, self.port)
+        self.leader_url = "{}://{}:{}/v1/leader".format(self.schema, self.host,
+                self.port)
 
     def set(self, key, value, ttl=None):
         """Sets the key to value"""
