@@ -3,8 +3,6 @@ etcd-py
 
 A python client to etcd (https://github.com/coreos/etcd)
 
-This is very early code.
-
 Getting Started
 ===============
 
