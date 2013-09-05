@@ -33,12 +33,14 @@ Setting a key with a TTL of 3 seconds and watching it with an optional timeout o
 Test and set
 
 .. code-block:: pycon
+
     >>> e.testandset("message", "hello world", "goodbye world")
     testandset(index=37, key=u'/message', prevValue=u'hello world', expiration=None)
 
 Servers
 
 .. code-block:: pycon
+
     >>> e.machines()
     [u'https://127.0.0.1:4001']
     >>> e.leader()
