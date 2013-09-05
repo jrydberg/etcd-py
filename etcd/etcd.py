@@ -49,8 +49,6 @@ class Etcd(object):
         Note: ssl_cert may be set to a file containing both certificate and
         key
         """
-        self.host = host
-        self.port = port
         self.ssl_conf = None
         if ssl_cert and ssl_key:
             # separate cert and key files
@@ -62,11 +60,11 @@ class Etcd(object):
             schema = "https"
         else:
             schema = "http"
-        self.url_base = "{}://{}:{}".format(self.schema, self.host, self.port)
-        self.keys_url = "{}/v1/keys/".format(self.url_base)
-        self.watch_url = "{}/v1/watch/".format(self.url_base)
-        self.machines_url = "{}/v1/machines".format(self.url_base)
-        self.leader_url = "{}/v1/leader".format(self.url_base)
+        url_base = "{}://{}:{}".format(schema, host, port)
+        self.keys_url = "{}/v1/keys/".format(url_base)
+        self.watch_url = "{}/v1/watch/".format(url_base)
+        self.machines_url = "{}/v1/machines".format(url_base)
+        self.leader_url = "{}/v1/leader".format(url_base)
 
     def set(self, key, value, ttl=None):
         """Sets key to value
