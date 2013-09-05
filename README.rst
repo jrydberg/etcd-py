@@ -11,7 +11,7 @@ Getting Started
 .. code-block:: pycon
 
     >>> import etcd
-    >>> e = etcd.Etcd("10.0.1.110")
+    >>> e = etcd.Etcd()
     >>> e.set("message", "Hello, World!")
     set(index=192, newKey=False, prevValue=u'Hey Wait!', expiration=None)
     >>> e.get("message")
