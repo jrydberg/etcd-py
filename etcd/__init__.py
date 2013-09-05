@@ -1,1 +1,1 @@
-from etcd import Etcd
+from etcd import Etcd, EtcdError
