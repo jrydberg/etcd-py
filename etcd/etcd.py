@@ -59,9 +59,9 @@ class Etcd(object):
             # this should be a pem containing both cert and key
             self.ssl_conf = ssl_cert
         if self.ssl_conf:
-            self.schema = "https"
+            schema = "https"
         else:
-            self.schema = "http"
+            schema = "http"
         self.url_base = "{}://{}:{}".format(self.schema, self.host, self.port)
         self.keys_url = "{}/v1/keys/".format(self.url_base)
         self.watch_url = "{}/v1/watch/".format(self.url_base)
