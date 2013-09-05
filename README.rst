@@ -15,11 +15,11 @@ Set, Get, Delete
     >>> import etcd
     >>> e = etcd.Etcd()
     >>> e.set("message", "Hello, World!")
-    set(index=192, newKey=False, prevValue=u'Hey Wait!', expiration=None)
+    set(index=48, newKey=True, prevValue=None, expiration=None)
     >>> e.get("message")
-    get(index=192, value=u'Hello, World!')
+    get(index=48, value=u'Hello, World!')
     >>> e.delete("message")
-    delete(index=31, prevValue=u'Hello, World!')
+    delete(index=49, prevValue=u'Hello, World!')
 
 Setting a key with a TTL of 3 seconds and watching it with an optional timeout of 5 seconds
 
