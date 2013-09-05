@@ -13,7 +13,6 @@ See LICENSE for more details
 """
 
 import sys
-import multiprocessing
 
 from collections import namedtuple
 
