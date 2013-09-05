@@ -49,14 +49,11 @@ class Etcd(object):
             self.schema = "https"
         else:
             self.schema = "http"
-        self.keys_url = "{}://{}:{}/v1/keys/".format(self.schema, self.host,
-                self.port)
-        self.watch_url = "{}://{}:{}/v1/watch/".format(self.schema, self.host,
-                self.port)
-        self.machines_url = "{}://{}:{}/v1/machines".format(self.schema,
-                self.host, self.port)
-        self.leader_url = "{}://{}:{}/v1/leader".format(self.schema, self.host,
-                self.port)
+        self.url_base = "{}://{}:{}".format(self.schema, self.host, self.port)
+        self.keys_url = "{}/v1/keys/".format(self.url_base)
+        self.watch_url = "{}/v1/watch/".format(self.url_base)
+        self.machines_url = "{}/v1/machines".format(self.url_base)
+        self.leader_url = "{}/v1/leader".format(self.url_base)
 
     def set(self, key, value, ttl=None):
         """Sets the key to value"""
