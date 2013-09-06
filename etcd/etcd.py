@@ -11,6 +11,7 @@ Copyright (C) 2013 Kris Foster
 See LICENSE for more details
 """
 
+from urlparse import urlparse
 from collections import namedtuple
 
 import requests
@@ -39,7 +40,7 @@ class EtcdError(BaseException):
 class Etcd(object):
     """Talks to an etcd instance"""
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, ssl_cert=None,
-            ssl_key=None):
+            ssl_key=None, follow_leader=True):
         """
         host: sets the hostname or IP address of the etcd server
         port: sets the port that the server is listening on
@@ -59,8 +60,18 @@ class Etcd(object):
         else:
             schema = "http"
         self.base_url = "{}://{}:{}".format(schema, host, port)
-        self.machine_cache = self.machines()
         self.current_leader = self.leader()
+        self.follow_leader = follow_leader
+        if self.follow_leader:
+            # not quite right! leader returns the server port not client!
+            #self.base_url = self.current_leader
+            # not quite right either! schema doesn't follow client's prefered
+            # schema
+            #self.base_url = self.machines()[0]
+            leader_parts = urlparse(self.machines()[0])
+            self.base_url ="{}://{}:{}".format(schema, leader_parts.hostname,
+                    leader_parts.port)
+        self.machine_cache = self.machines()
 
     def set(self, key, value, ttl=None):
         """Sets key to value
