@@ -71,7 +71,8 @@ class Etcd(object):
             leader_parts = urlparse(self.machines()[0])
             self.base_url ="{}://{}:{}".format(schema, leader_parts.hostname,
                     leader_parts.port)
-        self.machine_cache = self.machines()
+        self.machines_cache = None
+        self.machines()
 
     def set(self, key, value, ttl=None):
         """Sets key to value
@@ -169,7 +170,8 @@ class Etcd(object):
         """Returns a list of machines in the cluster"""
         req = requests.get(MACHINES_URL.format(self.base_url),
                 cert=self.ssl_conf)
-        return req.text.split(', ')
+        self.machines_cache = req.text.split(', ')
+        return self.machines_cache
 
     def leader(self):
         """Returns the leader"""
