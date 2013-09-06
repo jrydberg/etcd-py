@@ -19,17 +19,16 @@ import requests
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4001
 
+KEYS_URL = "{}/v1/keys/{}"
+WATCH_URL = "{}/v1/watch/{}"
+MACHINES_URL = "{}/v1/machines"
+LEADER_URL = "{}/v1/leader"
 
 EtcdSet = namedtuple("set", "index, newKey, prevValue, expiration")
 EtcdGet = namedtuple("get", "index, value")
 EtcdDelete = namedtuple("delete", "index, prevValue")
 EtcdWatch = namedtuple("watch", "action, value, key, index, newKey")
 EtcdTestAndSet = namedtuple("testandset", "index, key, prevValue, expiration")
-
-KEYS_URL = "{}/v1/keys/{}"
-WATCH_URL = "{}/v1/watch/{}"
-MACHINES_URL = "{}/v1/machines"
-LEADER_URL = "{}/v1/leader"
 
 
 class EtcdError(BaseException):
