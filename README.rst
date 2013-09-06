@@ -52,6 +52,16 @@ Client certificates
     or
     >>> e = etcd.Etcd(ssl_cert="my.crt", ssl_key="my.key")
 
+TODO
+====
+
+* optionally start watching from last seen index
+* recover from a failed node by testing trying the next known node
+* error handling of http calls
+* optionally do not follow redirects
+* proper unit tests
+* a CI machine
+
 Author
 ======
 
