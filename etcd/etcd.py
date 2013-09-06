@@ -45,8 +45,10 @@ class Etcd(object):
         host: sets the hostname or IP address of the etcd server
         port: sets the port that the server is listening on
         ssl_cert / ssl_key: specify an optional client certificate and key
+        follow_leader: if True we will always try to follow the current leader
+            (not yet implemented fully!)
         Note: ssl_cert may be set to a file containing both certificate and
-        key
+            key
         """
         self.ssl_conf = None
         if ssl_cert and ssl_key:
