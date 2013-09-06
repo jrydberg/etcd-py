@@ -69,7 +69,7 @@ class Etcd(object):
             # schema
             #self.base_url = self.machines()[0]
             leader_parts = urlparse(self.machines()[0])
-            self.base_url ="{}://{}:{}".format(schema, leader_parts.hostname,
+            self.base_url = "{}://{}:{}".format(schema, leader_parts.hostname,
                     leader_parts.port)
         self.machines_cache = None
         self.machines()
